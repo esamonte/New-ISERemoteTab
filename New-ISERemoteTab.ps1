@@ -138,8 +138,16 @@ Process {
         Test-WSMan @testParams -ErrorAction Stop | Out-Null
 
         $newtab = $psise.powershelltabs.Add()
+
+        #get a list of open tabs and increment a counter
+        $openTabs = $psise.PowerShellTabs.DisplayName
+        $newTabCount = 1
+        do {
+            $newTabDisplayName = "{0} {1}" -f $Computer.ToUpper(), $newTabCount++
+        } until($openTabs -notcontains $newTabDisplayName)
+
         #change the tab name
-        $newTab.DisplayName = $Computer.ToUpper()
+        $newTab.DisplayName = $newTabDisplayName #"{0} - {1}" -f $Computer.ToUpper(), $Credential.username
         if ($ConfigurationName){$newtab.DisplayName += " $ConfigurationName"}
     
         #wait for new tab to be created
